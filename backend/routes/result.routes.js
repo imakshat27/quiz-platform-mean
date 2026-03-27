@@ -4,6 +4,6 @@ const resultController = require('../controllers/result.controller');
 const { checkSession } = require('../middleware/auth.middleware');
 
 router.post('/submit-quiz', checkSession, resultController.submitQuiz);
-router.get('/my-results', checkSession, resultController.getMyResults);
+router.get('/quiz/:quizId/results', checkSession, resultController.getQuizResults);
 
 module.exports = router;

@@ -5,6 +5,11 @@ const Quiz = require('../models/Quiz');
 exports.submitQuiz = async (req, res) => {
   try {
     const { quizId, answers } = req.body; // answers: array of selected option indices corresponding to questions
+    const participantName = req.session.userName;
+
+    if (!participantName) {
+      return res.status(400).json({ message: 'Logged-in user name is required' });
+    }
 
     // Verify quiz exists
     const quiz = await Quiz.findById(quizId);
@@ -31,7 +36,7 @@ exports.submitQuiz = async (req, res) => {
 
     // Store result
     const newResult = new Result({
-      userId: req.session.userId,
+      participantName,
       quizId,
       answers,
       score,
@@ -46,11 +51,21 @@ exports.submitQuiz = async (req, res) => {
   }
 };
 
-exports.getMyResults = async (req, res) => {
+exports.getQuizResults = async (req, res) => {
   try {
-    const results = await Result.find({ userId: req.session.userId })
-                                .populate('quizId', 'title description')
-                                .sort({ submittedAt: -1 });
+    const quizId = req.params.quizId;
+    
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz not found' });
+    }
+    
+    // Authorization: only the quiz creator can view its results
+    if (quiz.createdBy.toString() !== req.session.userId) {
+      return res.status(403).json({ message: 'Unauthorized to view these results' });
+    }
+
+    const results = await Result.find({ quizId }).sort({ score: -1, submittedAt: -1 });
     res.json(results);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

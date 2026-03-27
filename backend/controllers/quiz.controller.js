@@ -4,9 +4,11 @@ const Question = require('../models/Question');
 exports.createQuiz = async (req, res) => {
   try {
     const { title, description } = req.body;
+    const quizCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     const newQuiz = new Quiz({
       title,
       description,
+      quizCode,
       createdBy: req.session.userId
     });
 
@@ -17,9 +19,9 @@ exports.createQuiz = async (req, res) => {
   }
 };
 
-exports.getAllQuizzes = async (req, res) => {
+exports.getMyQuizzes = async (req, res) => {
   try {
-    const quizzes = await Quiz.find().populate('createdBy', 'name');
+    const quizzes = await Quiz.find({ createdBy: req.session.userId }).sort({ createdAt: -1 });
     res.json(quizzes);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -41,6 +43,18 @@ exports.getQuizById = async (req, res) => {
     quizData.questionCount = questionCount;
 
     res.json(quizData);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.getQuizByCode = async (req, res) => {
+  try {
+    const quiz = await Quiz.findOne({ quizCode: req.params.code.toUpperCase() });
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz not found. Please check the code.' });
+    }
+    res.json(quiz);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

@@ -4,7 +4,9 @@ const quizController = require('../controllers/quiz.controller');
 const { checkSession } = require('../middleware/auth.middleware');
 
 router.post('/create-quiz', checkSession, quizController.createQuiz);
-router.get('/quizzes', checkSession, quizController.getAllQuizzes);
+router.get('/my-quizzes', checkSession, quizController.getMyQuizzes);
 router.get('/quiz/:id', checkSession, quizController.getQuizById);
+router.get('/code/:code', checkSession, quizController.getQuizByCode);
+router.get('/quiz/code/:code', checkSession, quizController.getQuizByCode);
 
 module.exports = router;
