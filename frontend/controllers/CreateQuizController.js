@@ -1,6 +1,6 @@
 app.controller('CreateQuizController', ['$scope', 'QuizService', '$location', '$rootScope', function($scope, QuizService, $location, $rootScope) {
-    if (!$rootScope.isAuthenticated || $rootScope.user.role !== 'Admin') {
-        $location.path('/dashboard');
+    if (!$rootScope.isAuthenticated) {
+        $location.path('/login');
         return;
     }
 

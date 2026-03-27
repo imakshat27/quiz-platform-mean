@@ -1,6 +1,7 @@
 app.controller('DashboardController', ['$scope', 'QuizService', '$location', '$rootScope', function($scope, QuizService, $location, $rootScope) {
     $scope.quizzes = [];
     $scope.errorMessage = '';
+    $scope.joinData = { quizCode: '' };
 
     if (!$rootScope.isAuthenticated) {
         $location.path('/login');
@@ -17,15 +18,21 @@ app.controller('DashboardController', ['$scope', 'QuizService', '$location', '$r
         $location.path('/create-quiz');
     };
 
+    $scope.joinQuiz = function() {
+        if (!$scope.joinData.quizCode) {
+            $scope.errorMessage = 'Please enter a quiz code.';
+            return;
+        }
+
+        $scope.errorMessage = '';
+        $location.path('/attempt-quiz/' + $scope.joinData.quizCode.toUpperCase());
+    };
+
     $scope.addQuestions = function(quizId) {
         $location.path('/add-question/' + quizId);
     };
 
-    $scope.attemptQuiz = function(quizId) {
-        $location.path('/attempt-quiz/' + quizId);
-    };
-    
-    $scope.viewResults = function() {
-        $location.path('/result');
+    $scope.viewQuizResults = function(quizId) {
+        $location.path('/quiz-results/' + quizId);
     };
 }]);

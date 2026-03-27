@@ -1,19 +1,13 @@
-app.controller('ResultController', ['$scope', 'ResultService', '$location', '$rootScope', function($scope, ResultService, $location, $rootScope) {
-    if (!$rootScope.isAuthenticated) {
-        $location.path('/login');
+app.controller('ResultController', ['$scope', '$location', '$rootScope', function($scope, $location, $rootScope) {
+    if (!$rootScope.latestResult) {
+        $location.path('/dashboard');
         return;
     }
 
-    $scope.results = [];
-    $scope.errorMessage = '';
+    $scope.result = $rootScope.latestResult;
 
-    ResultService.getMyResults().then(function(response) {
-        $scope.results = response.data;
-    }).catch(function(error) {
-        $scope.errorMessage = 'Failed to load results';
-    });
-
-    $scope.goBack = function() {
+    $scope.goHome = function() {
+        $rootScope.latestResult = null; // Clear it when going home
         $location.path('/dashboard');
     };
 }]);

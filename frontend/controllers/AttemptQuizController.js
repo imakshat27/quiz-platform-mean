@@ -1,24 +1,27 @@
 app.controller('AttemptQuizController', ['$scope', 'QuizService', 'ResultService', '$routeParams', '$location', '$rootScope', function($scope, QuizService, ResultService, $routeParams, $location, $rootScope) {
-    if (!$rootScope.isAuthenticated) {
+    if (!$rootScope.isAuthenticated || !$rootScope.user) {
         $location.path('/login');
         return;
     }
 
-    $scope.quizId = $routeParams.quizId;
+    $scope.quizCode = $routeParams.quizCode;
     $scope.quiz = null;
     $scope.questions = [];
     $scope.userAnswers = [];
     $scope.errorMessage = '';
+    $scope.participantName = $rootScope.user.name;
 
-    QuizService.getQuizById($scope.quizId).then(function(response) {
+    QuizService.getQuizByCode($scope.quizCode).then(function(response) {
         $scope.quiz = response.data;
-    });
-
-    QuizService.getQuestionsByQuizId($scope.quizId).then(function(response) {
-        $scope.questions = response.data;
-        $scope.userAnswers = new Array($scope.questions.length).fill(null);
+        
+        QuizService.getQuestionsByQuizId($scope.quiz._id).then(function(qResponse) {
+            $scope.questions = qResponse.data;
+            $scope.userAnswers = new Array($scope.questions.length).fill(null);
+        }).catch(function() {
+            $scope.errorMessage = 'Could not load quiz questions.';
+        });
     }).catch(function(error) {
-        $scope.errorMessage = 'Could not load quiz questions.';
+        $scope.errorMessage = 'Invalid Quiz Code or Quiz not found.';
     });
 
     $scope.submitQuiz = function() {
@@ -29,11 +32,12 @@ app.controller('AttemptQuizController', ['$scope', 'QuizService', 'ResultService
         }
 
         const submission = {
-            quizId: $scope.quizId,
+            quizId: $scope.quiz._id,
             answers: $scope.userAnswers
         };
 
         ResultService.submitQuiz(submission).then(function(response) {
+            $rootScope.latestResult = response.data.result;
             $location.path('/result');
         }).catch(function(error) {
             $scope.errorMessage = error.data && error.data.message ? error.data.message : 'Failed to submit quiz';

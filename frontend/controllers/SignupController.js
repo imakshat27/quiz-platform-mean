@@ -1,5 +1,5 @@
 app.controller('SignupController', ['$scope', 'AuthService', '$location', function($scope, AuthService, $location) {
-    $scope.user = { name: '', email: '', password: '', role: 'Student' };
+    $scope.user = { name: '', email: '', password: '' };
     $scope.errorMessage = '';
     $scope.successMessage = '';
 

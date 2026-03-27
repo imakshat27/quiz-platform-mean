@@ -1,44 +1,32 @@
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark"><i class="bi bi-trophy text-warning"></i> My Results</h2>
-        <button class="btn btn-outline-primary fw-bold px-4 rounded-pill" ng-click="goBack()">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-        </button>
-    </div>
-
-    <div class="alert alert-danger" ng-if="errorMessage">{{ errorMessage }}</div>
-
-    <div class="row g-4">
-        <div class="col-md-6 col-lg-4" ng-repeat="result in results">
-            <div class="card h-100 border-0 shadow-sm result-card" style="border-radius: 1rem; transition: transform 0.2s;">
-                <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                    <h5 class="card-title fw-bold text-dark text-truncate">{{ result.quizId.title }}</h5>
-                    <p class="text-muted small mb-0">{{ result.createdAt | date:'medium' }}</p>
-                </div>
-                <div class="card-body text-center p-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-3 border shadow-sm" style="width: 100px; height: 100px;">
-                        <h2 class="m-0 fw-bold" ng-class="{'text-success': (result.score/result.totalQuestions) >= 0.5, 'text-danger': (result.score/result.totalQuestions) < 0.5}">
-                            {{ result.score }}/{{ result.totalQuestions }}
-                        </h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg text-center" style="border-radius: 1.5rem;">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-trophy-fill text-warning mb-3" style="font-size: 5rem;"></i>
                     </div>
-                </div>
-                <div class="card-footer bg-white border-top-0 text-center pb-4">
-                    <div class="progress shadow-sm" style="height: 12px; border-radius: 6px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                    <h2 class="fw-bold text-dark mb-2">Quiz Completed!</h2>
+                    <p class="text-muted fs-5 mb-4">Great job, <strong>{{ result.participantName }}</strong>!</p>
+
+                    <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-4 border shadow-sm" style="width: 140px; height: 140px;">
+                        <h1 class="m-0 fw-bold display-4" ng-class="{'text-success': (result.score/result.totalQuestions) >= 0.5, 'text-danger': (result.score/result.totalQuestions) < 0.5}">
+                            {{ result.score }}/{{ result.totalQuestions }}
+                        </h1>
+                    </div>
+
+                    <div class="progress shadow-sm mb-5" style="height: 14px; border-radius: 7px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                              ng-class="{'bg-success': (result.score/result.totalQuestions) >= 0.5, 'bg-danger': (result.score/result.totalQuestions) < 0.5}" 
                              ng-style="{'width': ((result.score / result.totalQuestions) * 100) + '%'}" 
                              aria-valuenow="{{ result.score }}" aria-valuemin="0" aria-valuemax="{{ result.totalQuestions }}">
                         </div>
                     </div>
+
+                    <button class="btn btn-primary btn-lg w-100 fw-bold rounded-pill shadow-sm" ng-click="goHome()">
+                        <i class="bi bi-house-door"></i> Return Home
+                    </button>
                 </div>
-            </div>
-        </div>
-        
-        <div class="col-12" ng-if="results.length === 0 && !errorMessage">
-            <div class="text-center p-5 bg-white shadow-sm" style="border-radius: 1rem;">
-                <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem;"></i>
-                <h4 class="mt-3 text-muted">You haven't attempted any quizzes yet.</h4>
-                <a href="#!/dashboard" class="btn btn-primary mt-3 fw-bold rounded-pill px-4">Find a Quiz</a>
             </div>
         </div>
     </div>

@@ -4,10 +4,13 @@ app.factory('QuizService', ['$http', 'API_URL', function($http, API_URL) {
             return $http.post(API_URL + '/quiz/create-quiz', quiz);
         },
         getQuizzes: function() {
-            return $http.get(API_URL + '/quiz/quizzes');
+            return $http.get(API_URL + '/quiz/my-quizzes');
         },
         getQuizById: function(id) {
             return $http.get(API_URL + '/quiz/quiz/' + id);
+        },
+        getQuizByCode: function(code) {
+            return $http.get(API_URL + '/quiz/code/' + code);
         },
         addQuestion: function(question) {
             return $http.post(API_URL + '/question/add-question', question);
