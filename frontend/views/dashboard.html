@@ -1,0 +1,58 @@
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark">Welcome, {{ user.name }}! 👋</h2>
+            <p class="text-muted fs-5">Here's your dashboard. You are logged in as a <strong>{{ user.role }}</strong>.</p>
+        </div>
+        <div class="col-md-4 text-md-end" ng-if="user.role === 'Admin'">
+            <button class="btn btn-primary btn-lg fw-bold shadow-sm" ng-click="createQuiz()">
+                <i class="bi bi-plus-circle"></i> Create New Quiz
+            </button>
+        </div>
+        <div class="col-md-4 text-md-end" ng-if="user.role === 'Student'">
+            <button class="btn btn-primary btn-lg fw-bold shadow-sm" ng-click="viewResults()">
+                <i class="bi bi-graph-up"></i> My Results
+            </button>
+        </div>
+    </div>
+
+    <div class="alert alert-danger" ng-if="errorMessage">{{ errorMessage }}</div>
+
+    <h4 class="mb-3 fw-bold text-dark">Available Quizzes</h4>
+    <div class="row g-4">
+        <div class="col-md-4" ng-repeat="quiz in quizzes">
+            <div class="card h-100 border-0 shadow-sm quiz-card" style="border-radius: 1rem; transition: transform 0.2s;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-journal-text text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="card-title fw-bold text-dark">{{ quiz.title }}</h5>
+                    <p class="card-text text-muted mb-4">{{ quiz.description }}</p>
+                    
+                    <!-- Admin Actions -->
+                    <div ng-if="user.role === 'Admin'" class="d-grid gap-2">
+                        <button class="btn btn-outline-primary fw-bold" ng-click="addQuestions(quiz._id)">
+                            Add Questions
+                        </button>
+                    </div>
+                    
+                    <!-- Student Actions -->
+                    <div ng-if="user.role === 'Student'" class="d-grid gap-2">
+                        <button class="btn btn-primary fw-bold" ng-click="attemptQuiz(quiz._id)">
+                            Attempt Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" ng-if="quizzes.length === 0">
+            <div class="text-center p-5 bg-white shadow-sm" style="border-radius: 1rem;">
+                <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 text-muted">No quizzes available yet.</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .quiz-card:hover { transform: translateY(-5px); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; }
+</style>

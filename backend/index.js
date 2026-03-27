@@ -15,10 +15,17 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Dynamic CORS configuration
+// Serve Static Frontend
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Dynamic CORS configuration (if tested outside static server)
 app.use(cors({
-  origin: 'http://localhost:4200', // Angular app origin
-  credentials: true // Allow sending cookies/session
+  origin: function(origin, callback){
+    // Allow requests with no origin (like mobile apps or curl requests)
+    return callback(null, true);
+  },
+  credentials: true
 }));
 
 // Session configuration

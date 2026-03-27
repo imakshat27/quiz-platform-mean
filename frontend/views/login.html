@@ -1,0 +1,29 @@
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-4 mt-5 border-0 shadow-lg" style="border-radius: 1rem;">
+            <div class="text-center mb-4">
+                <i class="bi bi-person-circle text-primary" style="font-size: 3rem;"></i>
+                <h2 class="mt-2 fw-bold text-dark">Welcome Back</h2>
+                <p class="text-muted">Login to your account</p>
+            </div>
+            
+            <div class="alert alert-danger" ng-if="errorMessage">{{ errorMessage }}</div>
+            
+            <form ng-submit="login()">
+                <div class="mb-3">
+                    <label class="form-label text-secondary fw-semibold">Email Password</label>
+                    <input type="email" class="form-control form-control-lg bg-light" ng-model="credentials.email" required placeholder="name@example.com">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-secondary fw-semibold">Password</label>
+                    <input type="password" class="form-control form-control-lg bg-light" ng-model="credentials.password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">Login</button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <p class="text-muted">Don't have an account? <a href="#!/signup" class="text-primary fw-bold text-decoration-none">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+</div>
