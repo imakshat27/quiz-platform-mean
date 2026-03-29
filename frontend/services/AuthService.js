@@ -1,4 +1,4 @@
-app.factory('AuthService', ['$http', 'API_URL', '$rootScope', function($http, API_URL, $rootScope) {
+app.factory('AuthService', ['$q', 'API_URL', '$rootScope', function($q, API_URL, $rootScope) {
     let currentUser = null;
 
     function setUserState(user) {
@@ -13,12 +13,34 @@ app.factory('AuthService', ['$http', 'API_URL', '$rootScope', function($http, AP
         }
     }
 
+    function ajaxRequest(method, url, data) {
+        var deferred = $q.defer();
+        $.ajax({
+            url: url,
+            type: method,
+            data: data ? JSON.stringify(data) : undefined,
+            contentType: 'application/json',
+            xhrFields: { withCredentials: true },
+            success: function(res) {
+                $rootScope.$apply(function() {
+                    deferred.resolve({ data: res });
+                });
+            },
+            error: function(err) {
+                $rootScope.$apply(function() {
+                    deferred.reject({ data: err.responseJSON, status: err.status });
+                });
+            }
+        });
+        return deferred.promise;
+    }
+
     return {
         signup: function(user) {
-            return $http.post(API_URL + '/auth/signup', user);
+            return ajaxRequest('POST', API_URL + '/auth/signup', user);
         },
         login: function(credentials) {
-            return $http.post(API_URL + '/auth/login', credentials).then(function(response) {
+            return ajaxRequest('POST', API_URL + '/auth/login', credentials).then(function(response) {
                 if (response.data.user) {
                     setUserState(response.data.user);
                 }
@@ -26,13 +48,13 @@ app.factory('AuthService', ['$http', 'API_URL', '$rootScope', function($http, AP
             });
         },
         logout: function() {
-            return $http.get(API_URL + '/auth/logout').then(function(response) {
+            return ajaxRequest('GET', API_URL + '/auth/logout').then(function(response) {
                 setUserState(null);
                 return response;
             });
         },
         checkAuth: function() {
-            return $http.get(API_URL + '/auth/check-auth').then(function(response) {
+            return ajaxRequest('GET', API_URL + '/auth/check-auth').then(function(response) {
                 if (response.data.isAuthenticated) {
                     setUserState(response.data.user);
                 } else {

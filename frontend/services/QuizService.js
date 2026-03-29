@@ -1,22 +1,44 @@
-app.factory('QuizService', ['$http', 'API_URL', function($http, API_URL) {
+app.factory('QuizService', ['$q', '$rootScope', 'API_URL', function($q, $rootScope, API_URL) {
+    function ajaxRequest(method, url, data) {
+        var deferred = $q.defer();
+        $.ajax({
+            url: url,
+            type: method,
+            data: data ? JSON.stringify(data) : undefined,
+            contentType: 'application/json',
+            xhrFields: { withCredentials: true },
+            success: function(res) {
+                $rootScope.$apply(function() {
+                    deferred.resolve({ data: res });
+                });
+            },
+            error: function(err) {
+                $rootScope.$apply(function() {
+                    deferred.reject({ data: err.responseJSON, status: err.status });
+                });
+            }
+        });
+        return deferred.promise;
+    }
+
     return {
         createQuiz: function(quiz) {
-            return $http.post(API_URL + '/quiz/create-quiz', quiz);
+            return ajaxRequest('POST', API_URL + '/quiz/create-quiz', quiz);
         },
         getQuizzes: function() {
-            return $http.get(API_URL + '/quiz/my-quizzes');
+            return ajaxRequest('GET', API_URL + '/quiz/my-quizzes');
         },
         getQuizById: function(id) {
-            return $http.get(API_URL + '/quiz/quiz/' + id);
+            return ajaxRequest('GET', API_URL + '/quiz/quiz/' + id);
         },
         getQuizByCode: function(code) {
-            return $http.get(API_URL + '/quiz/code/' + code);
+            return ajaxRequest('GET', API_URL + '/quiz/code/' + code);
         },
         addQuestion: function(question) {
-            return $http.post(API_URL + '/question/add-question', question);
+            return ajaxRequest('POST', API_URL + '/question/add-question', question);
         },
         getQuestionsByQuizId: function(quizId) {
-            return $http.get(API_URL + '/question/questions/' + quizId);
+            return ajaxRequest('GET', API_URL + '/question/questions/' + quizId);
         }
     };
 }]);
