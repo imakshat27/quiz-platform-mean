@@ -56,5 +56,5 @@ app.use('/api/leaderboard', leaderboardRoutes);
 
 // Export app for testing or start server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });
