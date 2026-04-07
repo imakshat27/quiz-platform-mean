@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth.routes');
 const quizRoutes = require('./routes/quiz.routes');
 const questionRoutes = require('./routes/question.routes');
 const resultRoutes = require('./routes/result.routes');
+const leaderboardRoutes = require('./routes/leaderboard.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,6 +52,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/question', questionRoutes);
 app.use('/api/result', resultRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
 
 // Export app for testing or start server
 app.listen(PORT, () => {

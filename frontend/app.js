@@ -41,6 +41,10 @@ app.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpPro
             templateUrl: 'views/quiz-results.html',
             controller: 'ViewResultsController'
         })
+        .when('/leaderboard/:quizId', {
+            templateUrl: 'views/leaderboard.html',
+            controller: 'LeaderboardController'
+        })
         .otherwise({
             redirectTo: '/'
         });

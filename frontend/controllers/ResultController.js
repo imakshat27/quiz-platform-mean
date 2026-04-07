@@ -10,4 +10,8 @@ app.controller('ResultController', ['$scope', '$location', '$rootScope', functio
         $rootScope.latestResult = null; // Clear it when going home
         $location.path('/dashboard');
     };
+
+    $scope.goLeaderboard = function(quizId) {
+        $location.path('/leaderboard/' + quizId);
+    };
 }]);

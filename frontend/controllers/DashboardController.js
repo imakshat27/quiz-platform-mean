@@ -35,4 +35,8 @@ app.controller('DashboardController', ['$scope', 'QuizService', '$location', '$r
     $scope.viewQuizResults = function(quizId) {
         $location.path('/quiz-results/' + quizId);
     };
+
+    $scope.viewLeaderboard = function(quizId) {
+        $location.path('/leaderboard/' + quizId);
+    };
 }]);

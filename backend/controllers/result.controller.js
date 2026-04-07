@@ -1,6 +1,7 @@
 const Result = require('../models/Result');
 const Question = require('../models/Question');
 const Quiz = require('../models/Quiz');
+const leaderboardController = require('./leaderboard.controller');
 
 exports.submitQuiz = async (req, res) => {
   try {
@@ -44,6 +45,9 @@ exports.submitQuiz = async (req, res) => {
     });
 
     await newResult.save();
+
+    // Update leaderboard for this quiz
+    await leaderboardController.updateLeaderboard(quizId, participantName, score, totalQuestions);
 
     res.status(201).json({ message: 'Quiz submitted successfully', result: newResult });
   } catch (error) {
