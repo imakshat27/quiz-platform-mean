@@ -72,6 +72,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Attempted Quizzes Section -->
+    <h4 class="mt-5 mb-3 fw-bold text-dark" ng-if="attempts.length > 0">Attempted Quizzes</h4>
+    <div class="row g-4" ng-if="attempts.length > 0">
+        <div class="col-md-6 col-lg-4" ng-repeat="attempt in attempts">
+            <div class="card h-100 border-0 shadow-sm quiz-card" style="border-radius: 1rem; transition: transform 0.2s;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-award text-warning" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="card-title fw-bold text-dark">{{ attempt.quizId.title || 'Unknown Quiz' }}</h5>
+                    <div class="badge bg-secondary text-light mb-3 p-2 fs-6">Code: <span class="fw-bold">{{ attempt.quizId.quizCode || 'N/A' }}</span></div>
+                    
+                    <div class="mb-4">
+                        <h4 class="mb-0 fw-bold" ng-class="{'text-success': (attempt.score/attempt.totalQuestions) >= 0.5, 'text-danger': (attempt.score/attempt.totalQuestions) < 0.5}">
+                            {{ attempt.score }} / {{ attempt.totalQuestions }}
+                        </h4>
+                        <small class="text-muted">Attempted on {{ attempt.submittedAt | date:'medium' }}</small>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-info fw-bold text-white" ng-click="viewLeaderboard(attempt.quizId._id)">
+                            <i class="bi bi-trophy"></i> View Leaderboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <style>
     .quiz-card:hover { transform: translateY(-5px); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; }

@@ -27,6 +27,9 @@ app.factory('ResultService', ['$q', '$rootScope', 'API_URL', function($q, $rootS
         },
         getQuizResults: function(quizId) {
             return ajaxRequest('GET', API_URL + '/result/quiz/' + quizId + '/results');
+        },
+        getMyAttempts: function() {
+            return ajaxRequest('GET', API_URL + '/result/my-attempts');
         }
     };
 }]);

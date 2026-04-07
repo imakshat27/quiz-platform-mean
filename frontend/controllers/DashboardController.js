@@ -1,5 +1,6 @@
-app.controller('DashboardController', ['$scope', 'QuizService', '$location', '$rootScope', function($scope, QuizService, $location, $rootScope) {
+app.controller('DashboardController', ['$scope', 'QuizService', 'ResultService', '$location', '$rootScope', function($scope, QuizService, ResultService, $location, $rootScope) {
     $scope.quizzes = [];
+    $scope.attempts = [];
     $scope.errorMessage = '';
     $scope.joinData = { quizCode: '' };
 
@@ -12,6 +13,12 @@ app.controller('DashboardController', ['$scope', 'QuizService', '$location', '$r
         $scope.quizzes = response.data;
     }).catch(function(error) {
         $scope.errorMessage = 'Failed to load quizzes';
+    });
+
+    ResultService.getMyAttempts().then(function(response) {
+        $scope.attempts = response.data;
+    }).catch(function(error) {
+        // Attempt load error
     });
 
     $scope.createQuiz = function() {
