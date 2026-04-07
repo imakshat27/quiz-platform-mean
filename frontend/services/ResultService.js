@@ -30,6 +30,9 @@ app.factory('ResultService', ['$q', '$rootScope', 'API_URL', function($q, $rootS
         },
         getMyAttempts: function() {
             return ajaxRequest('GET', API_URL + '/result/my-attempts');
+        },
+        hideAttempt: function(attemptId) {
+            return ajaxRequest('PUT', API_URL + '/result/hide-attempt/' + attemptId);
         }
     };
 }]);

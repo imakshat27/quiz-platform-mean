@@ -83,12 +83,39 @@ exports.getMyAttempts = async (req, res) => {
       return res.status(401).json({ message: 'Unauthorized' });
     }
     
-    // Find all results for this user and populate the quiz title and code
-    const results = await Result.find({ participantName })
+    // Find all non-hidden results for this user and populate the quiz title and code
+    const results = await Result.find({ participantName, isHidden: { $ne: true } })
        .populate('quizId', 'title description quizCode')
        .sort({ submittedAt: -1 });
        
     res.json(results);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.hideAttempt = async (req, res) => {
+  try {
+    const attemptId = req.params.attemptId;
+    const participantName = req.session.userName;
+    
+    if (!participantName) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const result = await Result.findById(attemptId);
+    if (!result) {
+      return res.status(404).json({ message: 'Attempt not found' });
+    }
+
+    if (result.participantName !== participantName) {
+      return res.status(403).json({ message: 'Unauthorized to hide this attempt' });
+    }
+
+    result.isHidden = true;
+    await result.save();
+
+    res.json({ message: 'Attempt hidden successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

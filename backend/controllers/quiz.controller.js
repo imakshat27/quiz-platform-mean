@@ -59,3 +59,29 @@ exports.getQuizByCode = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+exports.deleteQuiz = async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    const userId = req.session.userId;
+    
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz not found' });
+    }
+
+    if (quiz.createdBy.toString() !== userId) {
+      return res.status(403).json({ message: 'Unauthorized to delete this quiz' });
+    }
+
+    // Delete associated questions
+    await Question.deleteMany({ quizId: quiz._id });
+    
+    // Using findByIdAndDelete instead of quiz.remove() which is deprecated
+    await Quiz.findByIdAndDelete(quiz._id);
+
+    res.json({ message: 'Quiz deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

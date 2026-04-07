@@ -8,5 +8,5 @@ router.get('/my-quizzes', checkSession, quizController.getMyQuizzes);
 router.get('/quiz/:id', checkSession, quizController.getQuizById);
 router.get('/code/:code', checkSession, quizController.getQuizByCode);
 router.get('/quiz/code/:code', checkSession, quizController.getQuizByCode);
-
+router.delete('/quiz/:quizId', checkSession, quizController.deleteQuiz);
 module.exports = router;

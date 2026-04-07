@@ -39,6 +39,9 @@ app.factory('QuizService', ['$q', '$rootScope', 'API_URL', function($q, $rootSco
         },
         getQuestionsByQuizId: function(quizId) {
             return ajaxRequest('GET', API_URL + '/question/questions/' + quizId);
+        },
+        deleteQuiz: function(quizId) {
+            return ajaxRequest('DELETE', API_URL + '/quiz/quiz/' + quizId);
         }
     };
 }]);
