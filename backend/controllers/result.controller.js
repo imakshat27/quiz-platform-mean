@@ -29,10 +29,10 @@ exports.submitQuiz = async (req, res) => {
 
     // Compare answers with correctAnswer
     for (let i = 0; i < questions.length; i++) {
-       // answers[i] is the user's selected index. It might be null/undefined if skipped.
-       if (answers[i] === questions[i].correctAnswer) {
-         score += 1;
-       }
+      // answers[i] is the user's selected index. It might be null/undefined if skipped.
+      if (answers[i] === questions[i].correctAnswer) {
+        score += 1;
+      }
     }
 
     // Store result
@@ -46,7 +46,6 @@ exports.submitQuiz = async (req, res) => {
 
     await newResult.save();
 
-    // Update leaderboard for this quiz
     await leaderboardController.updateLeaderboard(quizId, participantName, score, totalQuestions);
 
     res.status(201).json({ message: 'Quiz submitted successfully', result: newResult });
@@ -58,13 +57,13 @@ exports.submitQuiz = async (req, res) => {
 exports.getQuizResults = async (req, res) => {
   try {
     const quizId = req.params.quizId;
-    
+
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {
       return res.status(404).json({ message: 'Quiz not found' });
     }
-    
-    // Authorization: only the quiz creator can view its results
+
+
     if (quiz.createdBy.toString() !== req.session.userId) {
       return res.status(403).json({ message: 'Unauthorized to view these results' });
     }
@@ -82,12 +81,11 @@ exports.getMyAttempts = async (req, res) => {
     if (!participantName) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    
-    // Find all non-hidden results for this user and populate the quiz title and code
+
     const results = await Result.find({ participantName, isHidden: { $ne: true } })
-       .populate('quizId', 'title description quizCode')
-       .sort({ submittedAt: -1 });
-       
+      .populate('quizId', 'title description quizCode')
+      .sort({ submittedAt: -1 });
+
     res.json(results);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -98,7 +96,7 @@ exports.hideAttempt = async (req, res) => {
   try {
     const attemptId = req.params.attemptId;
     const participantName = req.session.userName;
-    
+
     if (!participantName) {
       return res.status(401).json({ message: 'Unauthorized' });
     }

@@ -34,11 +34,9 @@ exports.getQuizById = async (req, res) => {
     if (!quiz) {
       return res.status(404).json({ message: 'Quiz not found' });
     }
-    
-    // Also fetch the questions count for this quiz
+  
     const questionCount = await Question.countDocuments({ quizId: quiz._id });
-    
-    // Convert to plain object to attach custom fields
+
     const quizData = quiz.toObject();
     quizData.questionCount = questionCount;
 
@@ -74,10 +72,8 @@ exports.deleteQuiz = async (req, res) => {
       return res.status(403).json({ message: 'Unauthorized to delete this quiz' });
     }
 
-    // Delete associated questions
     await Question.deleteMany({ quizId: quiz._id });
     
-    // Using findByIdAndDelete instead of quiz.remove() which is deprecated
     await Quiz.findByIdAndDelete(quiz._id);
 
     res.json({ message: 'Quiz deleted successfully' });

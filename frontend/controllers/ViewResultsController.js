@@ -9,10 +9,10 @@ app.controller('ViewResultsController', ['$scope', '$routeParams', 'QuizService'
     $scope.results = [];
     $scope.errorMessage = '';
 
-    // Fetch quiz info
+        
     QuizService.getQuizById($scope.quizId).then(function(response) {
         $scope.quiz = response.data;
-        // Fetch results
+        
         ResultService.getQuizResults($scope.quizId).then(function(res) {
             $scope.results = res.data;
         }).catch(function(err) {

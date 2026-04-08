@@ -9,7 +9,6 @@ app.controller('CreateQuizController', ['$scope', 'QuizService', '$location', '$
 
     $scope.create = function() {
         QuizService.createQuiz($scope.quiz).then(function(response) {
-            // response.data.quiz might have the _id
             const createdQuizId = response.data.quiz ? response.data.quiz._id : response.data.quizId || response.data._id;
             
             if (createdQuizId) {

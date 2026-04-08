@@ -7,7 +7,7 @@ app.controller('ResultController', ['$scope', '$location', '$rootScope', functio
     $scope.result = $rootScope.latestResult;
 
     $scope.goHome = function() {
-        $rootScope.latestResult = null; // Clear it when going home
+        $rootScope.latestResult = null;
         $location.path('/dashboard');
     };
 
