@@ -52,6 +52,18 @@ app.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpPro
             templateUrl: 'views/students.html?v=2',
             controller: 'StudentsController'
         })
+        .when('/classes', {
+            templateUrl: 'views/classes.html?v=2',
+            controller: 'ClassesController'
+        })
+        .when('/class-details/:id', {
+            templateUrl: 'views/class-details.html?v=2',
+            controller: 'ClassDetailsController'
+        })
+        .when('/profile', {
+            templateUrl: 'views/profile.html?v=2',
+            controller: 'ProfileController'
+        })
         .otherwise({
             redirectTo: '/'
         });

@@ -11,11 +11,18 @@ app.controller('SignupController', ['$scope', 'AuthService', 'UserService', '$lo
     });
 
     $scope.signup = function() {
+        const name = $('#name').val();
         const email = $('#email').val();
         const password = $('#password').val();
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+        const nameRegex = /^[a-zA-Z\s]+$/;
+
+        if (!nameRegex.test(name)) {
+            $scope.errorMessage = 'Full Name must only contain characters and spaces.';
+            return;
+        }
 
         if (!emailRegex.test(email)) {
             $scope.errorMessage = 'Please enter a valid email address.';

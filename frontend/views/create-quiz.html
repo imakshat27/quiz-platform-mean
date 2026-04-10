@@ -19,6 +19,14 @@
                             <textarea class="form-control bg-light" ng-model="quiz.description" rows="3" required placeholder="What is this quiz about?"></textarea>
                         </div>
                         
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">Assign to Class (Optional)</label>
+                            <select class="form-select bg-light" ng-model="quiz.classId">
+                                <option value="">-- Global / No Specific Class --</option>
+                                <option ng-repeat="c in classes" value="{{c._id}}">{{c.name}} ({{c.classCode}})</option>
+                            </select>
+                        </div>
+                        
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-secondary">Duration (Minutes)</label>
@@ -33,9 +41,15 @@
                             </div>
                         </div>
 
-                        <div class="mb-5" ng-if="quiz.testType === 'scheduled'">
-                            <label class="form-label fw-bold text-secondary">Scheduled Date & Time</label>
-                            <input type="datetime-local" class="form-control bg-light" ng-model="quiz.scheduledFor" required>
+                        <div class="mb-5 row" ng-if="quiz.testType === 'scheduled'">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Scheduled Date & Time (Start)</label>
+                                <input type="datetime-local" class="form-control bg-light" ng-model="quiz.scheduledFor" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Scheduled End Time (Deadline)</label>
+                                <input type="datetime-local" class="form-control bg-light" ng-model="quiz.scheduledEndTime" required>
+                            </div>
                         </div>
                         
                         <div class="d-flex justify-content-between">

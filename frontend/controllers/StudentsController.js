@@ -1,5 +1,7 @@
-app.controller('StudentsController', ['$scope', 'UserService', '$location', '$rootScope', function($scope, UserService, $location, $rootScope) {
+app.controller('StudentsController', ['$scope', 'UserService', 'ClassService', '$location', '$rootScope', function($scope, UserService, ClassService, $location, $rootScope) {
     $scope.students = [];
+    $scope.classes = [];
+    $scope.classFilter = { className: '' };
     $scope.errorMessage = '';
     $scope.selectedStudent = null;
     $scope.studentAnalytics = null;
@@ -14,6 +16,10 @@ app.controller('StudentsController', ['$scope', 'UserService', '$location', '$ro
     }).catch(function(error) {
         $scope.errorMessage = 'Failed to load students.';
     });
+
+    ClassService.getTeacherClasses().then(function(res) {
+        $scope.classes = res.data;
+    }).catch(angular.noop);
 
     $scope.viewStudentDetails = function(studentId) {
         UserService.getStudentAnalytics(studentId).then(function(response) {

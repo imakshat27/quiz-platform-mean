@@ -1,11 +1,18 @@
-app.controller('CreateQuizController', ['$scope', 'QuizService', '$location', '$rootScope', function($scope, QuizService, $location, $rootScope) {
+app.controller('CreateQuizController', ['$scope', 'QuizService', 'ClassService', '$location', '$rootScope', function($scope, QuizService, ClassService, $location, $rootScope) {
     if (!$rootScope.isAuthenticated) {
         $location.path('/login');
         return;
     }
 
-    $scope.quiz = { title: '', description: '', testType: 'instant', durationMinutes: null, scheduledFor: null };
+    $scope.quiz = { title: '', description: '', classId: '', testType: 'instant', durationMinutes: null, scheduledFor: null, scheduledEndTime: null };
+    $scope.classes = [];
     $scope.errorMessage = '';
+
+    ClassService.getTeacherClasses().then(function(res) {
+        $scope.classes = res.data;
+    }).catch(function(err) {
+        console.error("Could not fetch classes", err);
+    });
 
     $scope.create = function() {
         QuizService.createQuiz($scope.quiz).then(function(response) {

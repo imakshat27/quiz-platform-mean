@@ -1,0 +1,49 @@
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="#!/classes" class="text-decoration-none mb-2 d-inline-block"><i class="bi bi-arrow-left"></i> Back to Classes</a>
+            <h2 class="fw-bold text-dark">{{ classDetails.name }}</h2>
+            <div class="badge bg-info text-dark fs-6">Class Code: <span class="fw-bold">{{ classDetails.classCode }}</span></div>
+        </div>
+    </div>
+
+    <div class="alert alert-danger" ng-if="errorMessage">{{ errorMessage }}</div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 1rem;">
+        <div class="card-body p-4">
+            <h4 class="fw-bold text-dark mb-4">Enrolled Students <span class="badge bg-secondary rounded-pill fs-6">{{ classDetails.students.length }}</span></h4>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Email Address</th>
+                            <th>Platform Joined Date</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="student in classDetails.students">
+                            <td class="fw-bold">
+                                <i class="bi bi-person-circle text-primary me-2"></i> {{ student.name }}
+                            </td>
+                            <td>{{ student.email }}</td>
+                            <td class="text-muted">{{ student.createdAt | date:'mediumDate' }}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-danger shadow-sm" ng-click="removeStudent(student._id, student.name)">
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="classDetails.students.length === 0">
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No students have joined this class yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

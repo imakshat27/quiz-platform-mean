@@ -1,5 +1,47 @@
 const User = require('../models/User');
 const Result = require('../models/Result');
+const bcrypt = require('bcryptjs');
+
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Missing fields' });
+    }
+    
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
 exports.getTeachers = async (req, res) => {
   try {
@@ -16,6 +58,10 @@ exports.getMyStudents = async (req, res) => {
     // Find all users where teacherId matches and role is student
     const students = await User.find({ teacherId, role: 'student' }).select('-password');
     
+    const Class = require('../models/Class');
+    const teacherClasses = await Class.find({ teacherId });
+
+    
     // Get analytics for each student
     const studentsWithAnalytics = await Promise.all(students.map(async (student) => {
       const results = await Result.find({ studentId: student._id });
@@ -28,10 +74,18 @@ exports.getMyStudents = async (req, res) => {
         }
         averageScore = (totalPercentage / totalQuizzes).toFixed(2);
       }
+      // Find which classes the student belongs to
+      const studentClasses = teacherClasses
+        .filter(c => c.students.includes(student._id))
+        .map(c => c.name);
+
+      const classesString = studentClasses.length > 0 ? studentClasses.join(', ') : 'Unassigned';
+
       return {
         ...student.toObject(),
         totalQuizzes,
-        averageScore
+        averageScore,
+        className: classesString
       };
     }));
 

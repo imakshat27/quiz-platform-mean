@@ -1,0 +1,51 @@
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark">My Profile</h2>
+            <p class="text-muted fs-5">View your details and update your security settings.</p>
+        </div>
+    </div>
+
+    <div class="alert alert-success" ng-if="successMessage">{{ successMessage }}</div>
+    <div class="alert alert-danger" ng-if="errorMessage">{{ errorMessage }}</div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm" style="border-radius: 1rem;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 6rem;"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">{{ profile.name }}</h3>
+                    <p class="text-muted mb-3">{{ profile.email }}</p>
+                    <div class="badge bg-secondary p-2 fs-6 text-uppercase">{{ profile.role }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm" style="border-radius: 1rem;">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-dark mb-4">Change Password</h4>
+                    <form ng-submit="changePassword()">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Current Password</label>
+                            <input type="password" class="form-control" ng-model="passwordData.currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">New Password</label>
+                            <input type="password" class="form-control" ng-model="passwordData.newPassword" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Confirm New Password</label>
+                            <input type="password" class="form-control" ng-model="passwordData.confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary fw-bold w-100">
+                            Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

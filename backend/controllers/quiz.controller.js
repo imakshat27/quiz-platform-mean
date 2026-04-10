@@ -3,15 +3,17 @@ const Question = require('../models/Question');
 
 exports.createQuiz = async (req, res) => {
   try {
-    const { title, description, testType, scheduledFor, durationMinutes } = req.body;
+    const { title, description, classId, testType, scheduledFor, scheduledEndTime, durationMinutes } = req.body;
     const quizCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     const newQuiz = new Quiz({
       title,
       description,
       testType: testType || 'instant',
       scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
+      scheduledEndTime: scheduledEndTime ? new Date(scheduledEndTime) : null,
       durationMinutes: durationMinutes || 0,
       quizCode,
+      classId: classId || null,
       createdBy: req.session.userId
     });
 
@@ -87,12 +89,14 @@ exports.deleteQuiz = async (req, res) => {
 
 exports.getAssignedQuizzes = async (req, res) => {
   try {
-    const User = require('../models/User'); // lazy load to avoid circular deps if any, or just require at top
-    const student = await User.findById(req.session.userId);
-    if (!student || !student.teacherId) {
-      return res.json([]);
-    }
-    const quizzes = await Quiz.find({ createdBy: student.teacherId }).sort({ createdAt: -1 });
+    const studentId = req.session.userId;
+    // Find classes this student is part of
+    const Class = require('../models/Class');
+    const classes = await Class.find({ students: studentId });
+    const classIds = classes.map(c => c._id);
+
+    // Fetch quizzes assigned to these classes
+    const quizzes = await Quiz.find({ classId: { $in: classIds } }).sort({ createdAt: -1 });
     res.json(quizzes);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -117,11 +121,14 @@ exports.getEligibility = async (req, res) => {
     if (existingResult) {
       canAttempt = false;
       reason = 'Already Attempted';
-    } else if (quiz.testType === 'scheduled' && quiz.scheduledFor) {
+    } else if (quiz.testType === 'scheduled') {
       const now = new Date();
-      if (now < quiz.scheduledFor) {
+      if (quiz.scheduledFor && now < quiz.scheduledFor) {
         canAttempt = false;
         reason = 'Not Started Yet';
+      } else if (quiz.scheduledEndTime && now > quiz.scheduledEndTime) {
+        canAttempt = false;
+        reason = 'Quiz Deadline Passed';
       }
     }
 
