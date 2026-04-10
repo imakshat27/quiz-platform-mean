@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const resultSchema = new mongoose.Schema({
   participantName: { type: String, required: true },
+  studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   quizId: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz', required: true },
   answers: [{ type: Number }], // The index of the selected option
   score: { type: Number, required: true },

@@ -1,56 +1,62 @@
 const app = angular.module('quizApp', ['ngRoute']);
 
 app.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
-    // Allows sending session cookies with requests (express-session)
     $httpProvider.defaults.withCredentials = true;
 
     $routeProvider
         .when('/', {
-            templateUrl: 'views/home.html',
+            templateUrl: 'views/home.html?v=2',
             controller: 'HomeController'
         })
         .when('/login', {
-            templateUrl: 'views/login.html',
+            templateUrl: 'views/login.html?v=2',
             controller: 'LoginController'
         })
         .when('/signup', {
-            templateUrl: 'views/signup.html',
+            templateUrl: 'views/signup.html?v=2',
             controller: 'SignupController'
         })
         .when('/dashboard', {
-            templateUrl: 'views/dashboard.html',
+            templateUrl: 'views/dashboard.html?v=2',
             controller: 'DashboardController'
         })
         .when('/create-quiz', {
-            templateUrl: 'views/create-quiz.html',
+            templateUrl: 'views/create-quiz.html?v=2',
             controller: 'CreateQuizController'
         })
         .when('/add-question/:quizId', {
-            templateUrl: 'views/add-question.html',
+            templateUrl: 'views/add-question.html?v=2',
             controller: 'AddQuestionController'
         })
+        .when('/quiz-details/:quizCode', {
+            templateUrl: 'views/quiz-details.html?v=2',
+            controller: 'QuizDetailsController'
+        })
         .when('/attempt-quiz/:quizCode', {
-            templateUrl: 'views/attempt-quiz.html',
+            templateUrl: 'views/attempt-quiz.html?v=2',
             controller: 'AttemptQuizController'
         })
         .when('/result', {
-            templateUrl: 'views/result.html',
+            templateUrl: 'views/result.html?v=2',
             controller: 'ResultController'
         })
         .when('/quiz-results/:quizId', {
-            templateUrl: 'views/quiz-results.html',
+            templateUrl: 'views/quiz-results.html?v=2',
             controller: 'ViewResultsController'
         })
         .when('/leaderboard/:quizId', {
-            templateUrl: 'views/leaderboard.html',
+            templateUrl: 'views/leaderboard.html?v=2',
             controller: 'LeaderboardController'
+        })
+        .when('/students', {
+            templateUrl: 'views/students.html?v=2',
+            controller: 'StudentsController'
         })
         .otherwise({
             redirectTo: '/'
         });
 }]);
 
-// Make API URL a constant
 app.constant('API_URL', 'http://localhost:3000/api');
 
 app.run(['$rootScope', 'AuthService', function($rootScope, AuthService) {

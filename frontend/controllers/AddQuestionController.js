@@ -9,6 +9,8 @@ app.controller('AddQuestionController', ['$scope', 'QuizService', '$routeParams'
     $scope.errorMessage = '';
     $scope.successMessage = '';
     $scope.addedQuestions = [];
+    $scope.isEditing = false;
+    $scope.editingQuestionId = null;
 
     function loadQuestions() {
         QuizService.getQuestionsByQuizId($scope.quizId).then(function(response) {
@@ -31,27 +33,70 @@ app.controller('AddQuestionController', ['$scope', 'QuizService', '$routeParams'
             return;
         }
 
-        const newQuestion = {
+        const questionData = {
             quizId: $scope.quizId,
             questionText: $scope.question.questionText,
             options: angular.copy($scope.question.options),
             correctAnswer: Number($scope.question.correctAnswer)
         };
 
-        QuizService.addQuestion(newQuestion).then(function() {
-            $scope.successMessage = "Question added successfully!";
-            $scope.errorMessage = '';
-            $scope.addedQuestions.push(newQuestion);
-            $scope.question = { questionText: '', options: ['', '', '', ''], correctAnswer: null };
+        if ($scope.isEditing) {
+            QuizService.updateQuestion($scope.editingQuestionId, questionData).then(function() {
+                $scope.successMessage = "Question updated successfully!";
+                $scope.errorMessage = '';
+                $scope.cancelEdit();
+                loadQuestions();
+                setTimeout(function() {
+                    $scope.$apply(function() {
+                        $scope.successMessage = '';
+                    });
+                }, 3000);
+            }).catch(function(error) {
+                $scope.errorMessage = error.data && error.data.message ? error.data.message : 'Failed to update question';
+            });
+        } else {
+            QuizService.addQuestion(questionData).then(function() {
+                $scope.successMessage = "Question added successfully!";
+                $scope.errorMessage = '';
+                $scope.question = { questionText: '', options: ['', '', '', ''], correctAnswer: null };
+                loadQuestions();
+                setTimeout(function() {
+                    $scope.$apply(function() {
+                        $scope.successMessage = '';
+                    });
+                }, 3000);
+            }).catch(function(error) {
+                $scope.errorMessage = error.data && error.data.message ? error.data.message : 'Failed to add question';
+            });
+        }
+    };
 
-            setTimeout(function() {
-                $scope.$apply(function() {
-                    $scope.successMessage = '';
-                });
-            }, 3000);
-        }).catch(function(error) {
-            $scope.errorMessage = error.data && error.data.message ? error.data.message : 'Failed to add question';
-        });
+    $scope.startEdit = function(q) {
+        $scope.isEditing = true;
+        $scope.editingQuestionId = q._id;
+        $scope.question = {
+            questionText: q.questionText,
+            options: angular.copy(q.options),
+            correctAnswer: q.correctAnswer
+        };
+        window.scrollTo(0, 0);
+    };
+
+    $scope.cancelEdit = function() {
+        $scope.isEditing = false;
+        $scope.editingQuestionId = null;
+        $scope.question = { questionText: '', options: ['', '', '', ''], correctAnswer: null };
+        $scope.errorMessage = '';
+    };
+
+    $scope.deleteQuestion = function(q) {
+        if (confirm('Are you sure you want to delete this question?')) {
+            QuizService.deleteQuestion(q._id).then(function() {
+                loadQuestions();
+            }).catch(function() {
+                alert('Failed to delete question.');
+            });
+        }
     };
 
     $scope.finish = function() {

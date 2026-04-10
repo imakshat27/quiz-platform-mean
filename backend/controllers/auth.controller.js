@@ -3,7 +3,7 @@ const User = require('../models/User');
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     let user = await User.findOne({ email });
     if (user) {
@@ -16,7 +16,9 @@ exports.signup = async (req, res) => {
     user = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      role: role || 'student',
+      teacherId: req.body.teacherId || null
     });
 
     await user.save();
@@ -43,8 +45,9 @@ exports.login = async (req, res) => {
 
     req.session.userId = user._id;
     req.session.userName = user.name;
+    req.session.userRole = user.role;
     
-    res.json({ message: 'Logged in successfully', user: { id: user._id, name: user.name, email: user.email } });
+    res.json({ message: 'Logged in successfully', user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -62,7 +65,7 @@ exports.logout = (req, res) => {
 
 exports.checkAuth = (req, res) => {
   if (req.session && req.session.userId) {
-    res.json({ isAuthenticated: true, user: { id: req.session.userId, name: req.session.userName } });
+    res.json({ isAuthenticated: true, user: { id: req.session.userId, name: req.session.userName, role: req.session.userRole } });
   } else {
     res.json({ isAuthenticated: false });
   }

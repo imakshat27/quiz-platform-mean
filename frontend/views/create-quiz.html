@@ -14,9 +14,28 @@
                             <input type="text" class="form-control form-control-lg bg-light" ng-model="quiz.title" required placeholder="E.g., JavaScript Basics">
                         </div>
                         
-                        <div class="mb-5">
+                        <div class="mb-4">
                             <label class="form-label fw-bold text-secondary">Description</label>
-                            <textarea class="form-control bg-light" ng-model="quiz.description" rows="4" required placeholder="What is this quiz about?"></textarea>
+                            <textarea class="form-control bg-light" ng-model="quiz.description" rows="3" required placeholder="What is this quiz about?"></textarea>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Duration (Minutes)</label>
+                                <input type="number" class="form-control bg-light" ng-model="quiz.durationMinutes" placeholder="Leave empty or 0 for no limit">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Test Type</label>
+                                <select class="form-select bg-light" ng-model="quiz.testType">
+                                    <option value="instant">Instant Access</option>
+                                    <option value="scheduled">Scheduled Test</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-5" ng-if="quiz.testType === 'scheduled'">
+                            <label class="form-label fw-bold text-secondary">Scheduled Date & Time</label>
+                            <input type="datetime-local" class="form-control bg-light" ng-model="quiz.scheduledFor" required>
                         </div>
                         
                         <div class="d-flex justify-content-between">

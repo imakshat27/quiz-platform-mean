@@ -1,7 +1,14 @@
-app.controller('SignupController', ['$scope', 'AuthService', '$location', function($scope, AuthService, $location) {
-    $scope.user = { name: '', email: '', password: '' };
+app.controller('SignupController', ['$scope', 'AuthService', 'UserService', '$location', function($scope, AuthService, UserService, $location) {
+    $scope.user = { name: '', email: '', password: '', role: 'student', teacherId: '' };
     $scope.errorMessage = '';
     $scope.successMessage = '';
+    $scope.teachers = [];
+
+    UserService.getTeachers().then(function(response) {
+        $scope.teachers = response.data;
+    }).catch(function(error) {
+        console.error('Error fetching teachers', error);
+    });
 
     $scope.signup = function() {
         const email = $('#email').val();

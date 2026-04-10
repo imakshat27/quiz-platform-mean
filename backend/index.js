@@ -8,6 +8,7 @@ const quizRoutes = require('./routes/quiz.routes');
 const questionRoutes = require('./routes/question.routes');
 const resultRoutes = require('./routes/result.routes');
 const leaderboardRoutes = require('./routes/leaderboard.routes');
+const userRoutes = require('./routes/user.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +48,7 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/question', questionRoutes);
 app.use('/api/result', resultRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/user', userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);

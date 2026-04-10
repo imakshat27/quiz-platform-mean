@@ -28,17 +28,29 @@ app.factory('QuizService', ['$q', '$rootScope', 'API_URL', function($q, $rootSco
         getQuizzes: function() {
             return ajaxRequest('GET', API_URL + '/quiz/my-quizzes');
         },
+        getAssignedQuizzes: function() {
+            return ajaxRequest('GET', API_URL + '/quiz/assigned');
+        },
         getQuizById: function(id) {
             return ajaxRequest('GET', API_URL + '/quiz/quiz/' + id);
         },
         getQuizByCode: function(code) {
             return ajaxRequest('GET', API_URL + '/quiz/code/' + code);
         },
+        getEligibility: function(code) {
+            return ajaxRequest('GET', API_URL + '/quiz/eligibility/' + code);
+        },
         addQuestion: function(question) {
             return ajaxRequest('POST', API_URL + '/question/add-question', question);
         },
         getQuestionsByQuizId: function(quizId) {
             return ajaxRequest('GET', API_URL + '/question/questions/' + quizId);
+        },
+        updateQuestion: function(questionId, question) {
+            return ajaxRequest('PUT', API_URL + '/question/question/' + questionId, question);
+        },
+        deleteQuestion: function(questionId) {
+            return ajaxRequest('DELETE', API_URL + '/question/question/' + questionId);
         },
         deleteQuiz: function(quizId) {
             return ajaxRequest('DELETE', API_URL + '/quiz/quiz/' + quizId);

@@ -4,7 +4,7 @@ app.controller('CreateQuizController', ['$scope', 'QuizService', '$location', '$
         return;
     }
 
-    $scope.quiz = { title: '', description: '' };
+    $scope.quiz = { title: '', description: '', testType: 'instant', durationMinutes: null, scheduledFor: null };
     $scope.errorMessage = '';
 
     $scope.create = function() {

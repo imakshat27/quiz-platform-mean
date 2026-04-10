@@ -9,7 +9,7 @@
             
             <div class="card shadow-lg border-0" style="border-radius: 1rem;">
                 <div class="card-header bg-primary text-white py-3" style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
-                    <h4 class="mb-0"><i class="bi bi-patch-question"></i> Add Question to Quiz</h4>
+                    <h4 class="mb-0"><i class="bi bi-patch-question"></i> {{ isEditing ? 'Edit Question' : 'Add Question to Quiz' }}</h4>
                 </div>
                 <div class="card-body p-4">
                     <div class="alert alert-danger" ng-if="errorMessage">{{errorMessage}}</div>
@@ -35,9 +35,14 @@
                         </div>
                         
                         <div class="d-flex justify-content-between mt-5 pt-3 border-top">
-                            <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm">
-                                <i class="bi bi-plus-lg"></i> Add Question
-                            </button>
+                            <div>
+                                <button type="button" class="btn btn-secondary btn-lg fw-bold shadow-sm me-2" ng-if="isEditing" ng-click="cancelEdit()">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm">
+                                    <i class="bi" ng-class="isEditing ? 'bi-pencil' : 'bi-plus-lg'"></i> {{ isEditing ? 'Update Question' : 'Add Question' }}
+                                </button>
+                            </div>
                             <button type="button" class="btn btn-success btn-lg fw-bold shadow-sm" ng-click="finish()">
                                 <i class="bi bi-check2-all"></i> Finish Setup
                             </button>
@@ -52,6 +57,10 @@
                     <div class="list-group-item list-group-item-action border-0 py-3" ng-repeat="q in addedQuestions track by $index">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1 fw-bold text-dark">Q{{$index + 1}}: {{q.questionText}}</h6>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-2" ng-click="startEdit(q)"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" ng-click="deleteQuestion(q)"><i class="bi bi-trash"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>

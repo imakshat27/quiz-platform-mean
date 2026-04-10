@@ -1,0 +1,63 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow border-0" style="border-radius: 1rem; overflow: hidden;">
+                <div class="bg-primary text-white text-center p-5">
+                    <i class="bi bi-file-earmark-text mb-3 d-block" style="font-size: 4rem;"></i>
+                    <h2 class="fw-bold mb-2">{{ quizInfo ? quizInfo.title : 'Loading...' }}</h2>
+                    <p class="mb-0 fs-5 opacity-75">Test Details & Instructions</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <div class="alert alert-danger" ng-if="errorMessage">{{ errorMessage }}</div>
+                    
+                    <div ng-if="isLoading" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div ng-if="!isLoading && !errorMessage">
+                        <h5 class="fw-bold text-dark mb-3">About this Quiz</h5>
+                        <p class="text-muted mb-4">{{ quizInfo.description }}</p>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded text-center border">
+                                    <h6 class="text-secondary fw-bold mb-1">Questions</h6>
+                                    <h4 class="mb-0 fw-bold text-dark">{{ quizInfo.questionCount }}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded text-center border">
+                                    <h6 class="text-secondary fw-bold mb-1">Duration</h6>
+                                    <h4 class="mb-0 fw-bold" ng-class="quizInfo.durationMinutes ? 'text-dark' : 'text-success'">
+                                        {{ quizInfo.durationMinutes ? quizInfo.durationMinutes + ' Mins' : 'No Limit' }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning text-center" ng-if="!canAttempt && reason === 'Already Attempted'">
+                            <i class="bi bi-exclamation-triangle-fill fs-4 d-block mb-2 text-warning"></i>
+                            <h5 class="fw-bold">Already Taken</h5>
+                            <p class="mb-0">You have already submitted an attempt for this quiz and cannot retake it.</p>
+                        </div>
+
+                        <div class="alert alert-info text-center" ng-if="!canAttempt && reason === 'Not Started Yet'">
+                            <i class="bi bi-calendar-event fs-4 d-block mb-2 text-info"></i>
+                            <h5 class="fw-bold">Scheduled Test</h5>
+                            <p class="mb-0">This test unlocks at <strong>{{ quizInfo.scheduledFor | date:'medium' }}</strong>.</p>
+                        </div>
+
+                        <div class="d-grid mt-4" ng-if="canAttempt">
+                            <button class="btn btn-success btn-lg fw-bold shadow-sm" ng-click="startAssessment()" style="border-radius: 2rem;">
+                                Start Assessment <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

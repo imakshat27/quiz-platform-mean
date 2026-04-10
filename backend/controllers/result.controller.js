@@ -18,6 +18,12 @@ exports.submitQuiz = async (req, res) => {
       return res.status(404).json({ message: 'Quiz not found' });
     }
 
+    // Check for existing attempt
+    const existingResult = await Result.findOne({ studentId: req.session.userId, quizId });
+    if (existingResult) {
+      return res.status(400).json({ message: 'You have already attempted this quiz.' });
+    }
+
     // Get all questions to evaluate the score
     const questions = await Question.find({ quizId });
     if (!questions || questions.length === 0) {
@@ -38,6 +44,7 @@ exports.submitQuiz = async (req, res) => {
     // Store result
     const newResult = new Result({
       participantName,
+      studentId: req.session.userId,
       quizId,
       answers,
       score,

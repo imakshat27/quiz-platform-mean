@@ -1,25 +1,73 @@
-app.controller('DashboardController', ['$scope', 'QuizService', 'ResultService', '$location', '$rootScope', function($scope, QuizService, ResultService, $location, $rootScope) {
+app.controller('DashboardController', ['$scope', 'QuizService', 'ResultService', 'UserService', '$location', '$rootScope', function($scope, QuizService, ResultService, UserService, $location, $rootScope) {
     $scope.quizzes = [];
     $scope.attempts = [];
+    $scope.assignedQuizzes = [];
+    $scope.analytics = { totalQuizzes: 0, averageScore: 0 };
     $scope.errorMessage = '';
     $scope.joinData = { quizCode: '' };
+    $scope.shareUrl = '';
+    $scope.copied = false;
+
+    $scope.openShareModal = function(quizCode) {
+        let baseUrl = window.location.origin + window.location.pathname;
+        $scope.shareUrl = baseUrl + '#!/quiz-details/' + quizCode.toUpperCase();
+        $scope.copied = false;
+        
+        var modalElement = document.getElementById('shareModal');
+        if (modalElement) {
+            var myModal = new bootstrap.Modal(modalElement);
+            myModal.show();
+        }
+    };
+
+    $scope.copyShareUrl = function() {
+        var copyText = document.getElementById("shareUrlInput");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value).then(function() {
+            $scope.$apply(function() {
+                $scope.copied = true;
+            });
+            setTimeout(function() {
+                $scope.$apply(function() {
+                    $scope.copied = false;
+                });
+            }, 2000);
+        });
+    };
 
     if (!$rootScope.isAuthenticated) {
         $location.path('/login');
         return;
     }
 
-    QuizService.getQuizzes().then(function(response) {
-        $scope.quizzes = response.data;
-    }).catch(function(error) {
-        $scope.errorMessage = 'Failed to load quizzes';
-    });
+    if ($rootScope.user.role === 'teacher') {
+        QuizService.getQuizzes().then(function(response) {
+            $scope.quizzes = response.data;
+        }).catch(function(error) {
+            $scope.errorMessage = 'Failed to load quizzes';
+        });
+    }
 
-    ResultService.getMyAttempts().then(function(response) {
-        $scope.attempts = response.data;
-    }).catch(function(error) {
-        // Attempt load error
-    });
+    if ($rootScope.user.role === 'student') {
+        ResultService.getMyAttempts().then(function(response) {
+            $scope.attempts = response.data;
+        }).catch(function(error) {
+            // Attempt load error
+        });
+        
+        QuizService.getAssignedQuizzes().then(function(response) {
+            $scope.assignedQuizzes = response.data;
+        }).catch(function(error) {
+            console.error('Failed to load assigned quizzes', error);
+        });
+
+        UserService.getMyAnalytics().then(function(response) {
+            $scope.analytics = response.data;
+        }).catch(function(error) {
+             console.error('Failed to load analytics', error);
+        });
+    }
 
     $scope.createQuiz = function() {
         $location.path('/create-quiz');
@@ -32,7 +80,7 @@ app.controller('DashboardController', ['$scope', 'QuizService', 'ResultService',
         }
 
         $scope.errorMessage = '';
-        $location.path('/attempt-quiz/' + $scope.joinData.quizCode.toUpperCase());
+        $location.path('/quiz-details/' + $scope.joinData.quizCode.toUpperCase());
     };
 
     $scope.addQuestions = function(quizId) {

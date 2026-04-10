@@ -9,7 +9,7 @@
     <div class="alert alert-danger" ng-if="errorMessage">{{ errorMessage }}</div>
 
     <div class="row g-4 mb-5">
-        <div class="col-lg-6">
+        <div class="col-lg-6" ng-if="user.role === 'teacher'">
             <div class="card h-100 border-0 shadow-sm" style="border-radius: 1rem;">
                 <div class="card-body p-4">
                     <h4 class="fw-bold text-dark mb-3">Create Quiz</h4>
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-6" ng-if="user.role === 'student'">
             <div class="card h-100 border-0 shadow-sm" style="border-radius: 1rem;">
                 <div class="card-body p-4">
                     <h4 class="fw-bold text-dark mb-3">Join Quiz</h4>
@@ -39,8 +39,8 @@
         </div>
     </div>
 
-    <h4 class="mb-3 fw-bold text-dark">My Quizzes</h4>
-    <div class="row g-4">
+    <h4 class="mb-3 fw-bold text-dark" ng-if="user.role === 'teacher'">My Quizzes</h4>
+    <div class="row g-4" ng-if="user.role === 'teacher'">
         <div class="col-md-4" ng-repeat="quiz in quizzes">
             <div class="card h-100 border-0 shadow-sm quiz-card position-relative" style="border-radius: 1rem; transition: transform 0.2s;">
                 <button class="btn btn-sm btn-link position-absolute top-0 end-0 m-2 text-danger" ng-click="deleteQuiz(quiz._id)" title="Delete Quiz" style="z-index: 10;">
@@ -55,6 +55,9 @@
                     <div class="badge bg-info text-dark mb-3 p-2 fs-6">Code: <span class="fw-bold">{{ quiz.quizCode }}</span></div>
                     
                     <div class="d-grid gap-2">
+                        <button class="btn btn-primary fw-bold" ng-click="openShareModal(quiz.quizCode)">
+                            <i class="bi bi-share"></i> Share Quiz
+                        </button>
                         <button class="btn btn-outline-primary fw-bold" ng-click="addQuestions(quiz._id)">
                             Add Questions
                         </button>
@@ -76,9 +79,55 @@
         </div>
     </div>
 
+    <!-- Student Analytics Summary -->
+    <div class="row g-4 mb-5" ng-if="user.role === 'student'">
+        <div class="col-md-6">
+            <div class="card bg-primary text-white h-100 border-0 shadow-sm" style="border-radius: 1rem;">
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold mb-3">Overall Average Score</h5>
+                    <div class="display-3 fw-bold">{{ analytics.averageScore }}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-success text-white h-100 border-0 shadow-sm" style="border-radius: 1rem;">
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold mb-3">Total Quizzes Attempted</h5>
+                    <div class="display-3 fw-bold">{{ analytics.totalQuizzes }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assigned Quizzes Section -->
+    <h4 class="mt-5 mb-3 fw-bold text-dark" ng-if="user.role === 'student'">Assigned Quizzes</h4>
+    <div class="row g-4 mb-5" ng-if="user.role === 'student'">
+        <div class="col-md-6 col-lg-4" ng-repeat="quiz in assignedQuizzes">
+            <div class="card h-100 border-0 shadow-sm quiz-card position-relative" style="border-radius: 1rem; transition: transform 0.2s;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-journal-check text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="card-title fw-bold text-dark">{{ quiz.title }}</h5>
+                    <p class="card-text text-muted mb-4">{{ quiz.description }}</p>
+                    <div class="d-grid gap-2">
+                        <a href="#!/quiz-details/{{ quiz.quizCode }}" class="btn btn-primary fw-bold">
+                            View Details 
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" ng-if="assignedQuizzes.length === 0">
+            <div class="text-center p-4 bg-white shadow-sm rounded">
+                <p class="text-muted mb-0">No quizzes mapped currently. Check back later!</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Attempted Quizzes Section -->
-    <h4 class="mt-5 mb-3 fw-bold text-dark" ng-if="attempts.length > 0">Attempted Quizzes</h4>
-    <div class="row g-4" ng-if="attempts.length > 0">
+    <h4 class="mt-5 mb-3 fw-bold text-dark" ng-if="attempts.length > 0 && user.role === 'student'">Attempted Quizzes History</h4>
+    <div class="row g-4 mb-5" ng-if="attempts.length > 0 && user.role === 'student'">
         <div class="col-md-6 col-lg-4" ng-repeat="attempt in attempts">
             <div class="card h-100 border-0 shadow-sm quiz-card position-relative" style="border-radius: 1rem; transition: transform 0.2s;">
                 <button class="btn btn-sm btn-link position-absolute top-0 end-0 m-2 text-danger" ng-click="deleteAttempt(attempt._id)" title="Remove Attempt" style="z-index: 10;">
@@ -111,3 +160,24 @@
 <style>
     .quiz-card:hover { transform: translateY(-5px); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; }
 </style>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 1rem; border: none; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold">Share Quiz</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted mb-2">Share this link with your students to let them attempt the quiz.</p>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control bg-light" ng-model="shareUrl" readonly id="shareUrlInput">
+          <button class="btn btn-primary fw-bold" type="button" ng-click="copyShareUrl()">
+            <i class="bi" ng-class="copied ? 'bi-check2' : 'bi-clipboard'"></i> {{ copied ? 'Copied' : 'Copy' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
