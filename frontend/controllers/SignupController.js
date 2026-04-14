@@ -12,10 +12,15 @@ app.controller('SignupController', ['$scope', 'AuthService', 'UserService', '$lo
 
     $scope.signup = function() {
         const name = $('#name').val();
-        const email = $('#email').val();
+        let email = $('#email').val();
         const password = $('#password').val();
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email) {
+            email = email.toLowerCase();
+            $scope.user.email = email;
+        }
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
         const nameRegex = /^[a-zA-Z\s]+$/;
 
@@ -26,6 +31,11 @@ app.controller('SignupController', ['$scope', 'AuthService', 'UserService', '$lo
 
         if (!emailRegex.test(email)) {
             $scope.errorMessage = 'Please enter a valid email address.';
+            return;
+        }
+
+        if (!/[a-zA-Z]/.test(email.split('@')[0])) {
+            $scope.errorMessage = 'Email part before @ must contain at least one character.';
             return;
         }
 

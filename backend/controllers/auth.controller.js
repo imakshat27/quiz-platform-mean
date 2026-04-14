@@ -1,9 +1,22 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
+const validateEmail = (email) => {
+  if (!email) return false;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) return false;
+  if (!/[a-zA-Z]/.test(email.split('@')[0])) return false;
+  return true;
+};
+
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    let { name, email, password, role } = req.body;
+
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'Invalid email format or missing characters before @' });
+    }
+    email = email.toLowerCase();
 
     let user = await User.findOne({ email });
     if (user) {
@@ -30,8 +43,12 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+    email = email.toLowerCase();
 
     const user = await User.findOne({ email });
     if (!user) {
